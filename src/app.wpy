@@ -1,0 +1,96 @@
+<style lang="stylus">
+  @import "./common/stylus/index"
+</style>
+
+<script>
+  import wepy from 'wepy'
+  import 'wepy-async-function'
+  import wxUtils from 'common/js/wxUtils'
+  import URIS from 'common/js/config'
+
+  export default class extends wepy.app {
+    constructor() {
+      super()
+      this.use('requestfix')
+      this.use('promisify')
+    }
+
+    onLaunch(option) {
+      const tips = wepy.getStorageSync('tips')
+      if (!tips) {
+        wepy.setStorageSync('tips', {order: false})
+      }
+      wepy.setStorageSync('merchantId', option.query.merchantId || 100004)
+      // 校验SDK
+      wxUtils.checkSDK()
+      const storageDate = wepy.getStorageSync('collectDate')
+      const date = new Date()
+      const collectDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+      if (storageDate !== collectDate) {
+        wepy.setStorageSync('collectDate', collectDate)
+        wepy.setStorageSync('collectLength', 0)
+      }
+    }
+
+    isObject(item) {
+      return typeof item === 'object' && !this.isArray(item)
+    }
+
+    isArray(item) {
+      return Object.prototype.toString.apply(item) === '[object Array]'
+    }
+
+    isUndefined(item) {
+      return typeof item === 'undefined'
+    }
+
+    // 向下暴露一个更换globalData的方法
+    updateGlobalData(name, obj) {
+      // 校验: globalData
+      if (!this.globalData) return
+      // 校验: 操作字段
+      if (typeof name !== 'string' || name === '') return {}
+      // 取已有信息
+      const info = this.globalData[name] || {}
+      // 更新缓存
+      if (obj && this.isObject(obj)) {
+        // Object合并第一层
+        this.globalData[name] = Object.assign({}, info, obj)
+      } else if (!this.isUndefined(obj)) {
+        // 其他非undefined数据直接覆盖
+        this.globalData[name] = obj
+      }
+      this.$apply && this.$apply()
+//    console.info(`[${obj ? 'UPDATE' : 'GET'} GlobalData ${name}]:`, this.globalData[name])
+      return this.globalData[name]
+    }
+
+    config = {
+      pages: [
+        'pages/home/home',
+        'pages/picture/picture',
+        'pages/live-play/live-play',
+        'pages/live-push/live-push',
+        'pages/rader/radar',
+        'pages/test/text',
+        'pages/circle/circle',
+        'pages/color-template/color-template'
+      ],
+      window: {
+        backgroundColor: '#F9F9F9',
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: '#fff',
+        navigationBarTitleText: '潘雨潼娱乐',
+        navigationBarTextStyle: 'black',
+        navigationStyle: 'custom'
+      }
+    }
+
+    globalData = {
+      baseUrl: URIS.api,
+      isAuthorise: false,
+      user: null,
+      orderInfo: {}
+    }
+  }
+</script>

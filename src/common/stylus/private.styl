@@ -1,0 +1,29 @@
+@import "./variable.styl"
+@import "./mixin.styl"
+
+.swiper-container .dots
+  position: absolute
+  left: 0
+  right: 12px
+  bottom: 10px
+  display: flex
+  justify-content: center
+
+.swiper-container .dots .dot
+  width: 5px
+  height: 5px
+  margin: 0 2.5px
+  border-radius: 50%
+  transition: all .6s
+
+.swiper-container .dots .dot.active
+  width: 12.5px
+
+.full-image
+  width: 100%
+  height: 100%
+
+.line-title
+  position: relative
+  text-align: center
+  font-size: $font-size-large

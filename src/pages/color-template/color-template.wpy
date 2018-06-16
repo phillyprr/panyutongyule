@@ -1,0 +1,235 @@
+<template>
+  <view class="container">
+    <HeadItem type="noTab" title="颜色模板"></HeadItem>
+    <canvas canvas-id="myCanvas" class="canvas" hidden="{{true}}"></canvas>
+    <picker bindchange="bindColorChange" value="{{index}}" range="{{countArr}}">
+      <view class="picker">
+        选择图片数量：<text class="{{colorCount ? '' : 'red-txt'}}">{{colorCount ? colorCount : '未选择'}}</text>
+      </view>
+    </picker>
+    <view class="explain">图片长宽比例4：3， 选择图片后填写对应颜色</view>
+    <view class="color-container" wx:for="{{imgArr}}" wx:key="{{index}}">
+      <view class="color-right">
+        <view class="img-box">
+          <view class="img-bottom" @tap="chioceImg({{index}})">上传图片</view>
+          <image class="color-img" src="{{index == 0 ? colorImg1 : index == 1 ? colorImg2 : colorImg3}}" wx:if="{{index == 0 ? colorImg1 : index == 1 ? colorImg2 : colorImg3}}"></image>
+          <image class="del-img" src="./icon-del@2x.png" wx:if="{{index == 0 ? colorImg1 : index == 1 ? colorImg2 : colorImg3}}" @tap="clear({{index}})"></image>
+        </view>
+      </view>
+      <view class="color-left">
+        <view class="left-top">输入颜色</view>
+        <input type="text" placeholder="请输入颜色" class="color-input" bindinput="colorTxtIn({{index}})"/>
+      </view>
+    </view>
+    <view class="submit-btn" wx:if="{{imgArr.length}}" @tap="drawImg">生成图片</view>
+
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import Tips from 'common/js/tips'
+  import HeadItem from '@/base/head-item/head-item'
+  export default class Home extends wepy.page {
+    config = {
+      navigationBarTitleText: '颜色模板',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#f9f9f9'
+    }
+
+    data = {
+      countArr: ['2张', '3张'],
+      colorCount: '',
+      colorImg1: '',
+      colorTxt1: '',
+      colorImg2: '',
+      colorTxt2: '',
+      colorImg3: '',
+      colorTxt3: '',
+      imgArr: []
+    }
+
+    components = {
+      HeadItem
+    }
+
+    methods = {
+      bindColorChange(e) {
+        let idx = e.detail.value
+        this.colorCount = this.countArr[idx]
+        this.imgArr = this.colorCount === '2张' ? [1, 2] : this.colorCount === '3张' ? [1, 2, 3] : []
+        this.$apply()
+      },
+      colorTxtIn(idx, e) {
+        idx = idx * 1 + 1
+        this['colorTxt' + idx] = e.detail.value
+        this.$apply()
+      },
+      async chioceImg(idx) {
+        idx = idx * 1 + 1
+        let res = await wepy.chooseImage()
+        let path = res.tempFilePaths[0]
+        this['colorImg' + idx] = path
+        this.$apply()
+      },
+      clear(idx) {
+        idx = idx * 1 + 1
+        this['colorImg' + idx] = ''
+        this.$apply()
+      },
+      async drawImg() {
+        Tips.loading('生成中')
+        const ctx = await wepy.createCanvasContext('myCanvas')
+        ctx.setFillStyle('white')
+        ctx.fillRect(0, 0, 1500, 1200)
+
+        ctx.setLineWidth(10)
+        ctx.setStrokeStyle('#ddd')
+        ctx.moveTo(20, 100)
+        ctx.lineTo(1480, 100)
+        ctx.stroke()
+
+        ctx.setFillStyle('white')
+        ctx.fillRect(500, 20, 500, 160)
+
+        ctx.setFillStyle('red')
+        ctx.fillRect(530, 30, 150, 150)
+
+        ctx.setFontSize(60)
+        ctx.setFillStyle('white')
+        ctx.setTextAlign('center')
+        ctx.fillText('时 尚', 605, 95)
+        ctx.fillText('正 品', 605, 165)
+
+        ctx.setFontSize(66)
+        ctx.setFillStyle('#FF0033')
+        ctx.setTextAlign('center')
+        ctx.fillText('颜色展示', 840, 130)
+
+        let imgHeight
+
+        if (this.colorCount === '2张') {
+          ctx.drawImage(this.colorImg1, 100, 230, 600, 800)
+          ctx.drawImage(this.colorImg2, 800, 230, 600, 800)
+          ctx.setFontSize(60)
+          ctx.setFillStyle('black')
+          ctx.setTextAlign('center')
+          ctx.fillText(this.colorTxt1, 375, 1140)
+          ctx.fillText(this.colorTxt2, 1125, 1140)
+          imgHeight = 1200
+        } else {
+          ctx.drawImage(this.colorImg1, 80, 260, 420, 560)
+          ctx.drawImage(this.colorImg2, 540, 260, 420, 560)
+          ctx.drawImage(this.colorImg3, 1000, 260, 420, 560)
+          ctx.setFontSize(60)
+          ctx.setFillStyle('black')
+          ctx.setTextAlign('center')
+          ctx.fillText(this.colorTxt1, 300, 910)
+          ctx.fillText(this.colorTxt2, 750, 910)
+          ctx.fillText(this.colorTxt3, 1200, 910)
+          imgHeight = 980
+        }
+
+        ctx.draw()
+        const res = await wepy.canvasToTempFilePath({
+          x: 0,
+          y: 0,
+          width: 1500,
+          height: imgHeight,
+          destWidth: 1500,
+          destHeight: imgHeight,
+          canvasId: 'myCanvas'
+        })
+        await wepy.previewImage({urls: [res.tempFilePath]})
+        Tips.loaded()
+      }
+    }
+
+    async onLoad(option) {
+
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .container
+    padding-bottom: 30px
+
+  .canvas
+    width: 1500px
+    height: 1200px
+
+  .red-txt
+    color: $color-orange
+  .picker
+    width: 100%
+    height: 40px
+    line-height: 40px
+    background: $color-white
+  .explain
+    line-height: 40px
+    font-size: $font-size-medium
+    font-family: PingFangSC-Regular
+    color: #000
+    background: $color-white
+    border-top: 1px solid $color-col-line
+  .color-container
+    display: flex
+    padding: 10px 12px
+    background: $color-white
+    border-top: 1px solid $color-col-line
+    .color-right
+      .img-box
+        width: 150px
+        height: 200px
+        position: relative
+        .img-bottom
+          width: 150px
+          height: 200px
+          border: 1px solid $color-col-line
+          background: $color-background
+          line-height: 200px
+          text-align: center
+        .color-img
+          width: 150px
+          height: 200px
+          position: absolute
+          left: 0
+          top: 0
+        .del-img
+          width: 20px
+          height: 20px
+          position: absolute
+          right: -8px
+          top: -8px
+
+    .color-left
+      flex: 1
+      height: 200px
+      display: flex
+      flex-direction: column
+      align-items: center
+      justify-content: center
+      .left-top
+        line-height: 40px
+        text-align: center
+        margin-bottom: 30px
+      .color-input
+        border: 1px solid #ddd
+        width: 150px
+        text-align: center
+  .submit-btn
+    width: 90vw
+    height: 40px
+    margin: 20px auto
+    background: #58bc58
+    border-radius: 5px
+    text-align: center
+    line-height: 40px
+    color: $color-white
+
+</style>

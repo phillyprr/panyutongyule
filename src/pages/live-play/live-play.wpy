@@ -1,0 +1,70 @@
+<template>
+  <view class="live-play">
+    <live-player src="{{playUrl}}" mode="live" background-mute="ture" autoplay bindstatechange="statechange" object-fit="fillCrop" max-cache="1" style="width: 100vw; height: 100vh;">
+      <cover-view class="title">赞播直播间</cover-view>
+      <cover-view class="content" wx:for="{{titles}}" wx:key="{{index}}">{{item}}</cover-view>
+    </live-player>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import users from 'common/mixins/users'
+  import base from 'common/mixins/base'
+  export default class LivePlay extends wepy.page {
+    mixins = [users, base]
+    data = {
+      playUrl: 'rtmp://20540.liveplay.myqcloud.com/live/20540_ebcc6cfa22',
+      titles: ['网络连接中···']
+    }
+
+    methods = {
+      statechange(e) {
+        let code = e.detail.code
+        switch (code) {
+          case 2001:
+            this.titles.push('已经连接服务器')
+            break
+          case 2002:
+            this.titles.push('已经连接服务器,开始拉流')
+            break
+          case 2003:
+            this.titles.push('网络接收到首个视频数据包(IDR)')
+            break
+          case 2004:
+            this.titles.push('视频播放开始')
+            break
+          case 2104:
+            this.titles.push('网络来包不稳：可能是下行带宽不足，或由于主播端出流不均匀')
+            break
+          case 2105:
+            this.titles.push('当前视频播放出现卡顿')
+            break
+        }
+        this.$apply()
+      }
+    }
+
+    onLoad(option) {
+      console.log(option)
+      wx.onUserCaptureScreen(() => {
+        this.titles.push('**用户愉快的和主播合影了')
+        this.$apply()
+      })
+      this.$preload('user', 'Gcaufy')
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .title
+    font-size: $font-size-large
+    color: $color-white
+  .content
+    font-size: $font-size-medium-x
+    color: $color-white
+
+</style>

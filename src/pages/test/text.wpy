@@ -1,0 +1,163 @@
+<template>
+  <view class="test">
+    <canvas class="canvas" canvas-id="myCanvas"></canvas>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+
+  export default class Test extends wepy.page {
+    data = {
+      timeBc: '',
+      maxWidth: ''
+    }
+
+    methods = {
+
+    }
+
+    async onLoad() {
+      let ctx = wx.createCanvasContext('myCanvas')
+      let r = 60
+      let h = 70
+      var g = ctx.createLinearGradient(0, 0, 180, 0)
+      g.addColorStop(0, 'skyblue')
+      g.addColorStop(1, 'blue')
+      ctx.setLineCap('round')
+      ctx.setStrokeStyle(g)
+      ctx.setLineWidth(10)
+      ctx.arc(h, h, r, 0, 0.5 * Math.PI, true)
+      ctx.stroke()
+      ctx.draw()
+    }
+
+//    onLoad() {
+//      let mCount = 5 // 边数
+//      let mCenter = this.width / 2 // 中心点
+//      let mRadius = mCenter - 50 // 半径
+//      let mAngle = Math.PI * 2 / mCount // 角度
+//      let r = mRadius / 4
+//      let fontSize = 12
+//
+//      const ctx = wx.createCanvasContext('radarcanvas')
+//      this.ctx = ctx
+//      // 绘制多边形
+//      ctx.save()
+//
+//      for (let i = 2; i >= 0; i--) {
+//        ctx.beginPath()
+//        let currR = r * (i + 2) // 当前半径
+//        // 画6条边
+//        for (let j = mCount - 1; j >= 0; j--) {
+//          let x = mCenter + currR * Math.sin(mAngle * j)
+//          let y = mCenter - currR * Math.cos(mAngle * j)
+//          ctx.lineTo(x, y)
+//        }
+//        if (i === 0) {
+//          ctx.setStrokeStyle('#D4D3DD')
+//          ctx.setFillStyle('#D4D3DD')
+//          ctx.fill()
+//        } else if (i === 1) {
+//          ctx.setStrokeStyle('#EAE9EF')
+//          ctx.setFillStyle('#EAE9EF')
+//          ctx.fill()
+//        } else if (i === 2) {
+//          ctx.setStrokeStyle('#F9F9FB')
+//          ctx.setFillStyle('#F9F9FB')
+//          ctx.fill()
+//        }
+//        ctx.closePath()
+//        ctx.stroke()
+//      }
+//      ctx.restore()
+//
+//      // 顶点连线
+// //      ctx.save()
+// //      ctx.beginPath()
+// //      ctx.setStrokeStyle(lineColor)
+// //
+// //      for (let i = 0; i < mCount; i++) {
+// //        let x = mCenter + mRadius * Math.sin(mAngle * i)
+// //        let y = mCenter - mRadius * Math.cos(mAngle * i)
+// //        ctx.moveTo(mCenter, mCenter)
+// //        ctx.lineTo(x, y)
+// //      }
+// //      ctx.stroke()
+// //      ctx.restore()
+//
+//      // 绘制文本
+//      let mData = [
+//        {text: '专业', max: 100},
+//        {text: '销售', max: 100},
+//        {text: '关系', max: 100},
+//        {text: '培训', max: 100},
+//        {text: '策划', max: 100}]
+//      let mColorText = 'red'
+//
+//      ctx.save()
+//
+//      for (let i = 0; i < mCount; i++) {
+//        let x = mCenter + mRadius * Math.sin(mAngle * i)
+//        let y = mCenter - mRadius * Math.cos(mAngle * i)
+//        if (i === 2) {
+//          ctx.setFontSize(14)
+//          ctx.setFillStyle('black')
+//        } else {
+//          ctx.setFontSize(fontSize)
+//          ctx.setFillStyle(mColorText)
+//        }
+//
+//        // 通过不同的位置，调整文本的显示位置
+//        if (i === 0) {
+//          ctx.fillText(mData[i].text, x - 10, y + 5 - fontSize)
+//        } else if (i === 1) {
+//          ctx.fillText(mData[i].text, x + 10, y)
+//        } else if (i === 2) {
+//          ctx.fillText(mData[i].text, x + 5, y + 13)
+//        } else if (i === 3) {
+//          ctx.fillText(mData[i].text, x - 32, y + 13)
+//        } else if (i === 4) {
+//          ctx.fillText(mData[i].text, x - 32, y)
+//        }
+//      }
+//      ctx.restore()
+//
+//      ctx.draw()
+//    }
+//
+//    _drawData() {
+//      const ctx = this.ctx
+//      ctx.save()
+//
+//      ctx.beginPath()
+//      for (let i = 0; i < mCount; i ++) {
+//        let x = mCenter + mRadius * Math.cos(mAngle * i) * mData[i][1] / 100
+//        let y = mCenter + mRadius * Math.sin(mAngle * i) * mData[i][1] / 100
+//
+//        ctx.lineTo(x, y)
+//      }
+//      ctx.closePath()
+//      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'
+//      ctx.fill()
+//
+//      ctx.restore()
+//    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .test
+    width: 100vw
+    height: 500px
+    background: #fff
+
+    .canvas
+      width: 100vw
+      height: 500px
+
+
+</style>

@@ -1,0 +1,57 @@
+<template>
+  <view class="head-item">
+    <image class="arrow" src="./icon-s_left1@2x.png" wx:if="{{type === 'noTab'}}" @tap="back"></image>
+    <view class="content">{{title}}</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class HeadItem extends wepy.component {
+    props = {
+      type: {
+        type: String,
+        default: 'noTab'
+      },
+      title: {
+        type: String,
+        default: ''
+      }
+    }
+
+    data = {
+      showToast: false,
+      content: 'error! error!'
+    }
+
+    methods = {
+      back() {
+        this.$parent.$back(1)
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+
+  .head-item
+    padding-top: 20px
+    width: 100vw
+    height: 44px
+    display: flex
+    align-items: center
+    justify-content: center
+    position: relative
+    .arrow
+      width: 15px
+      height: 15px
+      padding: 5px
+      position: absolute
+      left: 5px
+      top: 35px
+    .content
+      font-family: PingFangSC-Medium
+
+</style>

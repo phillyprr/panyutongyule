@@ -1,0 +1,157 @@
+<template>
+  <view class="live-push">
+    <live-pusher class="liver" url="{{pushUrl}}" max-bitrate="1000" beauty="{{beauty}}" whiteness="{{beauty}}" mode="FHD" bindstatechange="statechange" bindnetstatus="statuschange" style="width: 100vw; height: 100vh;">
+      <cover-view class="title" wx:for="{{titles}}" wx:key="{{item}}">
+        {{item}}
+      </cover-view>
+      <cover-view class="btn-beauty {{beauty===0?'ccc':''}}" @tap="changeBeauty">{{beautyTxt}}</cover-view>
+      <cover-view class="camera" @tap="cameraChange">切换摄像头</cover-view>
+      <cover-view class="begin" @tap="beginPush" wx:if="{{!beginIng}}">
+        <cover-image src="./icon-r_live@2x.png" class="begin-image"></cover-image>
+      </cover-view>
+      <cover-view class="back" wx:if="{{id}}" @tap="backTo">返回</cover-view>
+    </live-pusher>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import users from 'common/mixins/users'
+  import base from 'common/mixins/base'
+
+  export default class Activity extends wepy.page {
+    mixins = [users, base]
+    data = {
+      pushUrl: 'rtmp://20540.livepush.myqcloud.com/live/20540_ebcc6cfa22?bizid=20540&txSecret=6c6677877908d585b9dec64ffeaaa633&txTime=5A8EE8FF',
+      titles: ['直播准备中···'],
+      beauty: 0,
+      beautyTxt: '打开美颜',
+      LivePusher: null,
+      beginIng: false,
+      id: null
+    }
+
+    methods = {
+      statechange(e) {
+        let code = e.detail.code
+        switch (code) {
+          case 1003:
+            this.titles.push('打开摄像头成功')
+            break
+          case 1002:
+            this.titles.push('已经与服务器握手完毕,开始推流')
+            break
+          case 1001:
+            this.titles.push('已经连接推流服务器')
+            break
+        }
+        this.$apply()
+      },
+      statuschange(e) {
+        console.log(e)
+      },
+      changeBeauty() {
+        this.beauty = this.beauty === 0 ? 10 : 0
+        this.beautyTxt = this.beautyTxt === '打开美颜' ? '关闭美颜' : '打开美颜'
+        this.$apply()
+      },
+      cameraChange() {
+        this.LivePusher.switchCamera()
+        this.$apply()
+      },
+      beginPush() {
+        this.LivePusher.start({
+          success: () => {
+            this.titles[0] = '开始直播'
+            this.beginIng = true
+            this.$apply()
+          }
+        })
+      },
+      backTo() {
+        this.beautyTxt = this.beautyTxt === '打开美颜' ? '关闭美颜' : '打开美颜'
+        wx.navigateBackMiniProgram()
+        this.$apply()
+      }
+    }
+
+    onReady() {
+      this.LivePusher = wx.createLivePusherContext()
+      this.$apply()
+    }
+
+    onLoad(option) {
+      let id = option.id || ''
+      this.id = id
+      this.$apply()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .liver
+    position: relative
+
+    .title
+      font-size: $font-size-large
+      color: $color-white
+      width: 80vw
+
+    .btn-beauty
+      position: absolute
+      left: 10px
+      bottom: 10px
+      color: $color-white
+      font-size: $font-size-medium
+      width: 100px
+      height: 24px
+      border-radius: 10px
+      background: $color-theme
+      text-align: center
+      line-height: 24px
+
+    .btn-beauty.ccc
+      background: #ccc
+
+    .camera
+      position: absolute
+      right: 10px
+      bottom: 10px
+      color: $color-white
+      font-size: $font-size-medium
+      width: 100px
+      height: 24px
+      text-align: center
+      border-radius: 10px
+      background: $color-theme
+      line-height: 24px
+
+    .begin
+      position: absolute
+      width: 50px
+      height: 50px
+      left: 50%
+      top: 50%
+      transform: translate(-50%, -50%)
+
+      .begin-image
+        width: 50px
+        height: 50px
+
+    .back
+      position: absolute
+      right: 10px
+      top: 10px
+      width: 40px
+      height: 40px
+      border-radius: 20px
+      background: $color-theme
+      color: $color-white
+      line-height: 40px
+      font-size: $font-size-medium
+      text-align: center
+      z-index: 999
+</style>

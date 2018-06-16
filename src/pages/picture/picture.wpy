@@ -1,0 +1,152 @@
+<template>
+  <view class="test">
+    <view class="bc-box">
+      <image src="{{bcImg}}" class="bc-img" mode="aspectFill"></image>
+      <view class="bc-cover"></view>
+    </view>
+    <view class="container">
+      <view class="top-head">
+        <HeadItem type="noTab" title="美图"></HeadItem>
+      </view>
+      <scroll-view scroll-y class="scrollView" @scrolltolower="loadMore">
+        <image class="item" wx:for="{{imgList}}" wx:key="{{item}}" mode="widthFix" src="{{item}}" @tap="showImg({{item}})" @error="imageError({{item}})"></image>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import HeadItem from '@/base/head-item/head-item'
+  import mock from 'common/js/mock'
+
+  export default class Pictrue extends wepy.page {
+    config = {
+      navigationBarTitleText: '颜色模板',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#f9f9f9'
+    }
+
+    data = {
+      bcImg: '',
+      baseBcPath: 'https://picsum.photos/800/800/?image=',
+      imgList: [],
+      page: 1,
+      errorImgArr: [],
+      noMore: false
+    }
+
+    onShareAppMessage() {
+      return {
+        path: `/pages/picture/picture`
+      }
+    }
+
+    components = {
+      HeadItem
+    }
+
+    methods = {
+      async loadMore() {
+        if (this.noMore) {
+          return
+        }
+        this.page++
+        if (this.page >= 30) {
+          this.noMore = true
+          return
+        }
+        let res = mock.getImgList(10)
+        this.imgList = [...this.imgList, ...res]
+        this.bcImg = this.imgList[(this.page - 1) * 10]
+        this.$apply()
+      },
+      showImg(img) {
+        wx.previewImage({
+          current: img, // 当前显示图片的http链接
+          urls: this.imgList // 需要预览的图片http链接列表
+        })
+      },
+      imgError(errorImg) {
+        let num = errorImg.image.split('=')[1]
+        this.errorImgArr.push(num * 1)
+        console.log(this.errorImgArr)
+        this.goodsList = this.goodsList.filter((item) => {
+          return errorImg.id !== item.id
+        })
+      }
+    }
+
+    async onLoad() {
+      this.imgList = mock.getImgList(10)
+      this.bcImg = this.imgList[0]
+      this.$apply()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  page
+    width: 100vw
+    height: 100vh
+
+  .test
+    width: 100vw
+    height: 100vh
+    position: relative
+    .bc-box
+      width: 100%
+      height: 100%
+      position: absolute
+      left: 0
+      top: 0
+      font-size: 0
+      .bc-img
+        width: 100%
+        height: 100%
+      .bc-cover
+        width: 100%
+        height: 100%
+        background: rgba(255, 255, 255, 0.2)
+        position: absolute
+        left: 0
+        top: 0
+    .container
+      width: 100%
+      height: 100%
+      position: absolute
+      left: 0
+      top: 0
+      display: flex
+      flex-direction: column
+      .top-head
+        position: fixed
+        left: 0
+        top: 0
+        z-index: 100
+      .scrollView
+        width: 100%
+        height: 100%
+        font-size: 0
+        padding-top: 64px
+        box-sizing: border-box
+        .left-scroll,.right-scroll
+          width: 49vw
+          display: inline-block
+          vertical-align: top
+        .left-scroll
+          margin-right: 2vw
+        .item
+          display: inline-block
+          width: 49vw
+          background: white
+          margin-right: 2vw
+          margin-bottom: 2vw
+        .item:nth-child(2n)
+          margin-right: 0
+
+</style>

@@ -1,0 +1,159 @@
+<template>
+  <view class="mine">
+    <image class="backgroundImg" src="{{imgUrl}}" mode="aspectFill"></image>
+    <!--<view class="item" @tap="changeUrl('/pages/live-push/live-push')">-->
+      <!--<image src="./icon-r_live@2x.png" class="item-icon"></image>-->
+      <!--<view class="item-title">开始直播</view>-->
+    <!--</view>-->
+    <!--<view class="item" @tap="changeUrl('/pages/live-play/live-play')">-->
+      <!--<image src="./icon-r_live@2x.png" class="item-icon"></image>-->
+      <!--<view class="item-title">观看直播</view>-->
+    <!--</view>-->
+    <!--<button open-type="contact">进入会话</button>-->
+    <view class="container">
+      <HeadItem type="tab" title="首页"></HeadItem>
+      <view class="content-box">
+        <navigator url="/pages/color-template/color-template" hover-class="none">
+          <view class="item">
+            <image src="./icon-ability_plan2@2x.png" class="item-icon"></image>
+            <view class="item-title">颜色模板编辑</view>
+          </view>
+        </navigator>
+        <navigator url="/pages/picture/picture" hover-class="none">
+          <view class="item">
+            <image src="./icon-ability_train2@2x.png" class="item-icon"></image>
+            <view class="item-title">美图精选</view>
+          </view>
+        </navigator>
+      </view>
+      <view class="refush-box" @tap="changeImg">
+        <image src="./refush.png" class="refush-btn"></image>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import base from 'common/mixins/base'
+  import HeadItem from '@/base/head-item/head-item'
+
+  const errorImgs = [592, 281, 346, 346, 540, 843, 601, 285,
+    762, 750, 422, 148, 771, 97, 897,
+    205, 632, 462, 597, 647, 697, 595, 934, 968, 713, 138,
+    303, 759, 414, 246, 710, 763, 105, 854, 895, 712, 262,
+    578, 298, 636, 463, 747, 850, 286, 753, 752, 245, 589,
+    734, 706, 470, 754, 226, 792, 587, 714, 489, 224, 801,
+    708, 761, 333, 150, 963, 644, 956, 86, 394, 917, 899,
+    707, 746, 748, 332, 561, 624, 438, 711, 745, 920, 725,
+    812, 709, 207, 720, 359, 673, 749, 751]
+  export default class Home extends wepy.page {
+    mixins = [base]
+    data = {
+      playUrl: 'rtmp://20540.liveplay.myqcloud.com/live/20540_ebcc6cfa22',
+      imgPath: 'https://picsum.photos/800/800/?image=',
+      imgUrl: ''
+    }
+
+    config = {
+      navigationBarTitleText: '首页',
+      navigationBarBackgroundColor: '#FFB6C1',
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#f9f9f9',
+      disableScroll: true
+    }
+
+    components = {
+      HeadItem
+    }
+
+    onShareAppMessage() {
+      return {
+        path: `/pages/home/home`
+      }
+    }
+
+    methods = {
+      changeUrl(url) {
+        this.$navigate(url)
+      },
+      changeImg() {
+        this.imgUrl = this.imgPath + this._randomNum(1000, 1)
+        this.$apply()
+      }
+    }
+
+    _randomNum(max, min) {
+      let num = Math.floor(Math.random() * (max - min + 1) + min)
+      if (errorImgs.indexOf(num) !== -1) {
+        return this._randomNum(max, min)
+      } else {
+        return num
+      }
+    }
+
+    async onLoad() {
+      this.imgUrl = this.imgPath + this._randomNum(1000, 1)
+      this.$apply()
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .mine
+    width: 100vw
+    height: 100vh
+    position: relative
+    .backgroundImg
+      position: absolute
+      left: 0
+      top: 0
+      width: 100%
+      height: 100%
+    .container
+      position: absolute
+      left: 0
+      top: 0
+      width: 100%
+      height: 100%
+      display: flex
+      flex-direction: column
+      .content-box
+        flex: 1
+        display: flex
+        flex-direction: column
+        justify-content: center
+        .item
+          height: 60px
+          display: flex
+          align-items: center
+          background: rgba(255, 255, 255, 0.6)
+          padding-left: 20px
+          margin-bottom: 10px
+
+          .item-icon
+            width: 30px
+            height: 30px
+            margin-right: 20px
+          .item-title
+            font-size: 20px
+      .refush-box
+        position: absolute
+        right: 10px
+        bottom: 100px
+        width: 50px
+        height: 50px
+        border-radius: 50%
+        background: rgba(255, 255, 255, .7)
+        display: flex
+        align-items: center
+        justify-content: center
+        overflow: hidden
+        .refush-btn
+          width: 40px
+          height: 40px
+
+</style>

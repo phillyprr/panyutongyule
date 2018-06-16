@@ -1,0 +1,103 @@
+<template>
+  <view class="circle">
+    <!--<view class="shanxing shanxing1">-->
+      <!--<view class="sx1 sx"></view>-->
+      <!--<view class="sx2 sx"></view>-->
+      <!--<view class="center"></view>-->
+    <!--</view>-->
+
+    <view class="box">
+      <progress percent="40" stroke-width="12" activeColor="red" class="progress" active="{{true}}"></progress>
+    </view>
+    <image src="./微信图片_20180103200306.png" class="img"></image>
+    <view class="imgbox">
+      <image src="./微信图片_20180103200306.png" class="img2"></image>
+      <view class="cover"></view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  export default class circle extends wepy.page {
+    data = {
+
+    }
+
+    methods = {
+      changeUrl(url) {
+        this.$navigate(url)
+      }
+    }
+
+    onLoad() {
+
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .shanxing
+    position: relative
+    width: 200px
+    height: 200px
+    border-radius: 100px
+    background-color: #f00
+    overflow: hidden
+  .sx
+    position: absolute
+    width: 200px
+    height: 200px
+    clip: rect(0px,100px,200px,0px)
+    border-radius: 100px
+
+  .center
+    position: absolute
+    width: 180px
+    height: 180px
+    border-radius: 90px
+    left: 50%
+    top: 50%
+    transform: translate(-50%, -50%)
+    background: $color-white
+
+  .shanxing1 .sx1
+    transform: rotate(180deg)
+    background-color: #ccc
+
+  .shanxing1 .sx2
+    transform: rotate(0deg)
+    background-color: #ccc
+
+  .box
+    width: 100px
+    height: 12px
+    border-radius: 6px
+    overflow: hidden
+  .progress
+    width: 100px
+  .img
+    width: 375px
+    height: 200px
+    filter: blur(6px) brightness(60%)
+  .imgbox
+    width: 375px
+    height: 200px
+    position: relative
+    .cover
+      position: absolute
+      width: 375px
+      height: 200px
+      background: rgba(0, 0, 0, 0.6)
+      left: 0
+      top: 0
+  .img2
+    width: 375px
+    height: 200px
+    filter: blur(6px)
+
+</style>

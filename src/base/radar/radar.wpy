@@ -1,0 +1,291 @@
+<template>
+  <view class="radar">
+    <view class="radar-container">
+      <canvas class="canvas" canvas-id="radarCanvas">
+        <cover-view wx:for="{{textArr}}" class="radar-item {{checked === index ? 'active' : ''}}" wx:key="{{item}}" @tap="show({{index}})">
+          <cover-view class="radar-item-img-box">
+            <cover-image src="{{item.icon}}" hidden="{{checked === index}}" class="radar-item-image"></cover-image>
+            <cover-image src="{{item.checked}}" hidden="{{checked !== index}}" class="radar-item-image"></cover-image>
+          </cover-view>
+          <cover-view class="radar-item-txt">{{item.txt}}</cover-view>
+        </cover-view>
+        <cover-view class="center-item">{{70}}</cover-view>
+      </canvas>
+    </view>
+    <view class="container">
+      <view class="head">
+        <view class="head-txt">{{textArr[checked].txt ? textArr[checked].txt : '销售'}}能力</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import WxCharts from 'common/libs/wxcharts'
+
+  export default class Radar extends wepy.component {
+    props = {
+      configArr: {
+        type: Object,
+        default: {}
+      },
+      eventIn: {
+        type: String,
+        default: 'no'
+      }
+    }
+
+    data = {
+      chart: null,
+      textArr: [
+        {txt: '专业', icon: './icon-ability_major@2x.png', checked: './icon-ability_major2@2x.png'},
+        {txt: '销售', icon: './icon-ability_sales@2x.png', checked: './icon-ability_sales2@2x.png'},
+        {txt: '关系', icon: './icon-ability_nexus@2x.png', checked: './icon-ability_nexus2@2x.png'},
+        {txt: '培训', icon: './icon-ability_train@2x.png', checked: './icon-ability_train2@2x.png'},
+        {txt: '策划', icon: './icon-ability_scheme@2x.png', checked: './icon-ability_scheme2@2x.png'}
+      ],
+      checked: 0
+    }
+
+    methods = {
+      show(idx) {
+        if (this.eventIn === 'no') {
+          this.checked = idx
+          this.$apply()
+        }
+      }
+    }
+
+    onLoad() {
+      console.log(this.configArr)
+      this.chart = new WxCharts({
+        canvasId: 'radarCanvas',
+        type: 'radar',
+        categories: ['', '', '', '', ''],
+        series: [{
+          data: [30, 30, 40, 70, 30],
+          color: '#ff3388'
+        }],
+        width: 300,
+        height: 240,
+        extra: {
+          radar: {
+            max: 100
+          }
+        }
+      })
+      this.$apply()
+    }
+
+//    onLoad() {
+//      let mCount = 5 // 边数
+//      let mCenter = this.width / 2 // 中心点
+//      let mRadius = mCenter - 50 // 半径
+//      let mAngle = Math.PI * 2 / mCount // 角度
+//      let r = mRadius / 4
+//      let fontSize = 12
+//
+//      const ctx = wx.createCanvasContext('radarcanvas')
+//      this.ctx = ctx
+//      // 绘制多边形
+//      ctx.save()
+//
+//      for (let i = 2; i >= 0; i--) {
+//        ctx.beginPath()
+//        let currR = r * (i + 2) // 当前半径
+//        // 画6条边
+//        for (let j = mCount - 1; j >= 0; j--) {
+//          let x = mCenter + currR * Math.sin(mAngle * j)
+//          let y = mCenter - currR * Math.cos(mAngle * j)
+//          ctx.lineTo(x, y)
+//        }
+//        if (i === 0) {
+//          ctx.setStrokeStyle('#D4D3DD')
+//          ctx.setFillStyle('#D4D3DD')
+//          ctx.fill()
+//        } else if (i === 1) {
+//          ctx.setStrokeStyle('#EAE9EF')
+//          ctx.setFillStyle('#EAE9EF')
+//          ctx.fill()
+//        } else if (i === 2) {
+//          ctx.setStrokeStyle('#F9F9FB')
+//          ctx.setFillStyle('#F9F9FB')
+//          ctx.fill()
+//        }
+//        ctx.closePath()
+//        ctx.stroke()
+//      }
+//      ctx.restore()
+//
+//      // 顶点连线
+// //      ctx.save()
+// //      ctx.beginPath()
+// //      ctx.setStrokeStyle(lineColor)
+// //
+// //      for (let i = 0; i < mCount; i++) {
+// //        let x = mCenter + mRadius * Math.sin(mAngle * i)
+// //        let y = mCenter - mRadius * Math.cos(mAngle * i)
+// //        ctx.moveTo(mCenter, mCenter)
+// //        ctx.lineTo(x, y)
+// //      }
+// //      ctx.stroke()
+// //      ctx.restore()
+//
+//      // 绘制文本
+//      let mData = [
+//        {text: '专业', max: 100},
+//        {text: '销售', max: 100},
+//        {text: '关系', max: 100},
+//        {text: '培训', max: 100},
+//        {text: '策划', max: 100}]
+//      let mColorText = 'red'
+//
+//      ctx.save()
+//
+//      for (let i = 0; i < mCount; i++) {
+//        let x = mCenter + mRadius * Math.sin(mAngle * i)
+//        let y = mCenter - mRadius * Math.cos(mAngle * i)
+//        if (i === 2) {
+//          ctx.setFontSize(14)
+//          ctx.setFillStyle('black')
+//        } else {
+//          ctx.setFontSize(fontSize)
+//          ctx.setFillStyle(mColorText)
+//        }
+//
+//        // 通过不同的位置，调整文本的显示位置
+//        if (i === 0) {
+//          ctx.fillText(mData[i].text, x - 10, y + 5 - fontSize)
+//        } else if (i === 1) {
+//          ctx.fillText(mData[i].text, x + 10, y)
+//        } else if (i === 2) {
+//          ctx.fillText(mData[i].text, x + 5, y + 13)
+//        } else if (i === 3) {
+//          ctx.fillText(mData[i].text, x - 32, y + 13)
+//        } else if (i === 4) {
+//          ctx.fillText(mData[i].text, x - 32, y)
+//        }
+//      }
+//      ctx.restore()
+//
+//      ctx.draw()
+//    }
+//
+//    _drawData() {
+//      const ctx = this.ctx
+//      ctx.save()
+//
+//      ctx.beginPath()
+//      for (let i = 0; i < mCount; i ++) {
+//        let x = mCenter + mRadius * Math.cos(mAngle * i) * mData[i][1] / 100
+//        let y = mCenter + mRadius * Math.sin(mAngle * i) * mData[i][1] / 100
+//
+//        ctx.lineTo(x, y)
+//      }
+//      ctx.closePath()
+//      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'
+//      ctx.fill()
+//
+//      ctx.restore()
+//    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .radar
+    background: $color-white
+
+  .radar-container
+    width: 100%
+    height: 220px
+    padding: 10px 0
+    position: relative
+    background: $color-white
+
+    .canvas
+      position: absolute
+      left: 50%
+      top: 50%
+      transform: translate(-50%, -50%)
+      background: $color-white
+      width: 300px
+      height: 200px
+
+      .radar-item
+        position: absolute
+        height: 30px
+        width: 80px
+        display: flex
+        align-items: center
+        justify-content: center
+
+        .radar-item-txt
+          font-size: $font-size-medium
+          color: $color-text-n
+          line-height: 24px
+
+        .radar-item-img-box
+          width: 24px
+          height: 24px
+          margin-right: 3px
+
+          .radar-item-image
+            width: 24px
+            height: 24px
+
+      .radar-item.active
+        .radar-item-txt
+          color: $color-text
+
+      .radar-item:nth-child(1)
+        left: 110px
+        top: -3px
+      .radar-item:nth-child(2)
+        left: 220px
+        top: 70px
+      .radar-item:nth-child(3)
+        left: 165px
+        bottom: -5px
+      .radar-item:nth-child(4)
+        left: 50px
+        bottom: -5px
+      .radar-item:nth-child(5)
+        left: 0px
+        top: 70px
+
+      .center-item
+        position: absolute
+        left: 130px
+        top: 98px
+        width: 40px
+        text-align: center
+        font-size: $font-size-large-x
+        color: $color-white
+        font-weight: bold
+
+  .container
+    width: 100%
+    .head
+      height: 50px
+      line-height: 50px
+      font-size: $font-size-medium-x
+      color: #333333
+      display: flex
+      align-items: center
+      justify-content: center
+      &:before, &:after
+        content: ''
+        width: 40px
+        height: 1px
+        background: #DAE0E4
+
+      &:before
+        margin-right: 15px
+      &:after
+        margin-left: 15px
+
+</style>

@@ -1,0 +1,50 @@
+<template>
+  <view class="toast" wx:if="{{showToast}}">
+    <view class="content">{{content}}</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Toast extends wepy.component {
+    data = {
+      showToast: false,
+      content: 'error! error!'
+    }
+
+    methods = {
+      show(content) {
+        this.content = content
+        this.showToast = true
+        setTimeout(() => {
+          this.showToast = false
+          this.$apply()
+        }, 2000)
+      }
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import '../../common/stylus/variable'
+
+  .toast
+    position: fixed
+    z-index: 9999
+    top: 42%
+    left: 50%
+    min-width: 200px
+    max-width: 300px
+    margin-left: -100px
+    padding: 10px 0
+    opacity: .9
+    border-radius: 6px
+    transition: all .5s ease-out
+    text-align: center
+    background-color: rgba(0, 0, 0, .8)
+    .content
+      line-height: 20px
+      font-size: $font-size-medium
+      color: $color-white
+</style>

@@ -1,0 +1,41 @@
+<template>
+  <view class="radarBox">
+    <radar :configArr.sync="arr"></radar>
+  </view>
+</template>
+
+<script>
+  /* eslint-disable no-undef */
+  import wepy from 'wepy'
+  import users from 'common/mixins/users'
+  import base from 'common/mixins/base'
+  import Radar from '@/base/radar/radar'
+
+  export default class Activity extends wepy.page {
+    mixins = [users, base]
+    data = {
+      arr: {a: 1, b: 2}
+    }
+
+    methods = {
+
+    }
+
+    onLoad() {
+
+    }
+
+    components = {
+      radar: Radar
+    }
+  }
+</script>
+
+<style lang="stylus">
+  @import "../../common/stylus/variable"
+
+  .radarBox
+    width: 100%
+    height: 100%
+
+</style>
