@@ -16,6 +16,7 @@
     }
 
     onLaunch(option) {
+
       const tips = wepy.getStorageSync('tips')
       if (!tips) {
         wepy.setStorageSync('tips', {order: false})
